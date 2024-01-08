@@ -10,6 +10,7 @@ namespace Dexter
 {
     internal class Program
     {
+        private const FileOptions FileFlagNoBuffering = (FileOptions)0x20000000;
         private static Stopwatch stopwatch;
         private static FileStream file;
         private static int bufferSize;
@@ -80,7 +81,8 @@ namespace Dexter
                                 file.Close();
                             }
 
-                            file = File.OpenRead(fileName);
+
+                            file = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.None, bufferSizeInMb * 1024 * 1024, FileFlagNoBuffering | FileOptions.SequentialScan);
 
                             stopwatch = new Stopwatch();
                             stopwatch.Start();
@@ -108,7 +110,7 @@ namespace Dexter
                         {
                             Console.WriteLine($"Running {cycles} write cycle(s) of {fileSizeInGb}GB against '{fileName}'");
 
-                            file = File.OpenWrite(fileName);
+                            file = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite, FileShare.None, bufferSizeInMb * 1024 * 1024, FileFlagNoBuffering | FileOptions.WriteThrough);
 
                             stopwatch = new Stopwatch();
                             stopwatch.Start();
@@ -138,7 +140,7 @@ namespace Dexter
                         {
                             Console.WriteLine($"Running {cycles} read/write cycle(s) of {fileSizeInGb}GB against '{fileName}'");
 
-                            file = File.Open(fileName, FileMode.Create);
+                            file = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite, FileShare.None, bufferSizeInMb * 1024 * 1024, FileFlagNoBuffering | FileOptions.WriteThrough);
 
                             stopwatch = new Stopwatch();
                             stopwatch.Start();
